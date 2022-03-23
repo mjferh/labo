@@ -184,3 +184,4 @@ project/target
 
 .Rproj.user
 *.Rproj
+.Rhistory
