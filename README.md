@@ -6,7 +6,7 @@ Rosario, 2022
 
 # Log
 
-## Clase 1
+## Clase 1/2
 
 src/rpart/z101_PrimerModelo.R  
 src/rpart/z102_PrimerModelo.ipynb  
