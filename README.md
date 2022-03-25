@@ -24,32 +24,18 @@ src/rpart/z231_mejormodelo.r
 
 ### Zero2Hero
 
-* 0101: data.table (fread) vs dataset (read.csv),
-
-* 0102: data.table, ggplot2
-
-* 0103: Árboles: rpart, manejo de la memoria
-
-* 0104: Árboles: Colinealidad, Normalización, Tx Log, Outliers
-
-* 0105: data.table a partir de columnas, fwrite
-
-* 0106: Kaggle: cant. BAJA + 2 en 202101 
-
-* 0107: Kaggle: envío archivo. Árbol sobre 202101
-
-* 0108: Árboles rpart: hiperparametros
-
-* 0109: caret: train/test estratificado
-
-* 0110: Reproducibilidad: set.seed()
-
-* 0111: rpart con train/test. Cálculo de ganancia sobre test/dataset
-
-* 0112: rpart con train/test: múltiples semillas. Función de ganancia
-
-* 0113: vectores: for vs. vectorial de R
-
-* 0114: Estimación Montecarlo
-
-* 0115: Función ArbolMontecarlo para n semillas.
+0101: data.table (fread) vs dataset (read.csv)  
+0102: data.table, ggplot2  
+0103: Árboles: rpart, manejo de la memoria  
+0104: Árboles: Colinealidad, Normalización, Tx Log, Outliers  
+0105: data.table a partir de columnas, fwrite  
+0106: Kaggle: cant. BAJA + 2 en 202101  
+0107: Kaggle: envío archivo. Árbol sobre 202101  
+0108: Árboles rpart: hiperparametros  
+0109: caret: train/test estratificado  
+0110: Reproducibilidad: set.seed()  
+0111: rpart con train/test. Cálculo de ganancia sobre test/dataset  
+0112: rpart con train/test: múltiples semillas. Función de ganancia  
+0113: vectores: for vs. vectorial de R  
+0114: Estimación Montecarlo  
+0115: Función ArbolMontecarlo para n semillas  
