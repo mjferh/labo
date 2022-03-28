@@ -8,19 +8,23 @@ Rosario, 2022
 
 ---
 
-
-
 # Log
 
-## Clase 1/2
+## Clase 1 y 2 - Tarea 1
 
-src/rpart/z101_PrimerModelo.R  
-src/rpart/z102_PrimerModelo.ipynb  
-src/rpart/z211_traintest_estratificado.r  
-src/rpart/z222_traintest_montecarlo.r  
-src/rpart/z231_mejormodelo.r  
+### rpart
 
-## Tarea 1
+z101_PrimerModelo.R: data.table, rpart, prp, salida kaggle  
+z102_PrimerModelo.ipynb  
+z211_traintest_estratificado.r: función partición, calc. ganancia  
+z222_traintest_montecarlo.r: 5 particiones, 1 por semilla. mcmapply.   
+z231_mejormodelo.r: comparación 3 modelos - montercarlo - 6 semillas.   
+z238_mejormodelo_analisis.r: comparación 3 modelos, montecarlo, 1000 semillas. Wilcoxon Test.  
+z238_mejormodelo_analisis_2.R: basado en z238. Gráfico de densidad de las ganancias de los  3 modelos.  
+z239_mejormodelo_analisis.ipynb  
+**z241_gridsearch.r**: basado en z241_gridsearch_esqueleto.r. Optimización de hiperparámetros (minsplit, minbucket, cp, maxdepth)  
+z242_aplicar_rpart_kaggle.r  
+z271_analisis_gridsearch.r  
 
 ### Zero2Hero
 

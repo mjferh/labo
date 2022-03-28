@@ -77,7 +77,6 @@ param_basicos <- list(
 # Un solo llamado, con la semilla 17
 ArbolEstimarGanancia(17, param_basicos)
 
-
 # la funcion mcmapply  llama a la funcion ArbolEstimarGanancia tantas veces como valores tenga el vector ksemillas
 ganancias <- mcmapply(ArbolEstimarGanancia,
   ksemillas, # paso el vector de semillas, que debe ser el primer parametro de la funcion ArbolEstimarGanancia

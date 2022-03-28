@@ -29,7 +29,7 @@ setwd("~/MEDGC/13_LaboratorioImplementacion1/") # Establezco el Working Director
 dataset <- fread("./datasets/paquete_premium_202011.csv")
 
 # particiono estratificadamente el dataset
-particionar(dataset, division = c(70, 30), agrupa = "clase_ternaria", seed = 664967) # Cambiar por la primer semilla de cada uno !
+particionar(dataset, division = c(70, 30), agrupa = "clase_ternaria", seed = 777137) # Cambiar por la primer semilla de cada uno !
 
 param_basicos <- list(
   "cp" = 0, # complejidad minima
