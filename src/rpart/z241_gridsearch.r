@@ -116,7 +116,7 @@ dir.create("./labo/exp/", showWarnings = FALSE)
 dir.create("./labo/exp/HT2020/", showWarnings = FALSE)
 
 archivo_salida <- paste0(
-  "./labo/exp/HT2020/gridsearch",
+  "./labo/exp/HT2020/gridsearch_ft",
   format(Sys.time(), "%Y%m%d_%H%M%S"),
   ".txt"
 )
@@ -132,7 +132,7 @@ cat(
 # Los valores deben estar ordenados de menor a mayor!!!
 params_min_split <- c(10, 25, 50, 100, 250, 500, 1000)
 params_min_bucket <- floor(params_min_split / 2)
-params_cp <- c(-1, seq(0, 0.1, 0.01), seq(0.15, 0.21, 0.5))
+params_cp <- c(-1, -0.75, -0.5, -0.25, seq(0, 0.01, 0.001))
 params_max_depth <- c(4, 6, 8, 10, 15, 20)
 
 # Cantidad de iteraciones (* 6 semillas)
@@ -166,3 +166,5 @@ for (min_split in params_min_split) {
     if (i <= length(params_min_bucket)) min_bucket <- params_min_bucket[i]
   }
 }
+
+

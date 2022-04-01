@@ -155,10 +155,10 @@ cat(
 )
 
 # Entrenamiento con las combinaciones de parámetros
-params_min_split <- c(50, 100, 250, 500, 750, 1000)
-params_min_bucket <- c(10, 20, 50, 100, 200, 500)
-params_cp <- c(-1, seq(0, 0.001, 0.0001))
-params_max_depth <- c(4, 6, 8, 10)
+params_min_split <- seq(100,800,50)
+params_min_bucket <- seq(20,40,1)
+params_cp <- c(-1)
+params_max_depth <- c(4,5,6)
 
 # Cantidad de iteraciones (* 5 semillas)
 seg_prom <- 50  #tiempo medio incluyendo los 5 entrenamientos por juego de parámetros (5 semillas)
@@ -178,8 +178,8 @@ param_grid <- expand.grid(
 param_grid_list <- split(param_grid, seq(nrow(param_grid)))
 
 # Detecto la cantidad de núcleos y creo el cluster
-# Incluyendo los lógicos no se nota una mejora sustancial. 
-ncores <- detectCores(logical = FALSE)
+# Probar con Físicos / Lógicos
+ncores <- detectCores(logical = TRUE)
 cl <- makeCluster(ncores)
 
 # Hago visible variables globales y funciones a los clusters. Las librerías 
