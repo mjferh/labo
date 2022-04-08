@@ -182,6 +182,10 @@ project/target
 .scala_dependencies
 .worksheet
 
+# RStudio
 .Rproj.user
 *.Rproj
 .Rhistory
+
+# Override rule for exp (.csv y .pdf)
+!exp/**
