@@ -8,14 +8,14 @@ require("rpart.plot")
 
 #Aqui debe cambiar los parametros por los que desea probar
 
-param_basicos  <- list( "cp"=          -1,  #complejidad minima
-                        "minsplit"=   750,     #minima cantidad de registros en un nodo para hacer el split
-                        "minbucket"=  35,     #minima cantidad de registros en una hoja
-                        "maxdepth"=     5 )    #profundidad máxima del arbol
+param_basicos  <- list( "cp"=          -0.0534854753727972,  #complejidad minima
+                        "minsplit"=   1089,     #minima cantidad de registros en un nodo para hacer el split
+                        "minbucket"=  398,     #minima cantidad de registros en una hoja
+                        "maxdepth"=     20 )    #profundidad máxima del arbol
 
 
 #Aqui se debe poner la carpeta de SU computadora local
-setwd("~/MEDGC/13_LaboratorioImplementacion1/")  #Establezco el Working Directory
+setwd("~/MEDGC/13_LaboratorioImplementacion/")  #Establezco el Working Directory
 
 #cargo los datos de 202011 que es donde voy a ENTRENAR el modelo
 dtrain  <- fread("./datasets/paquete_premium_202011.csv")
@@ -56,5 +56,5 @@ dir.create( "./labo/exp/", showWarnings = FALSE  )
 dir.create( "./labo/exp/KA2022/", showWarnings = FALSE  )
 
 fwrite( entrega, 
-        file= "./labo/exp/KA2022/K242_004.csv", 
+        file= "./labo/exp/KA2022/K242_005.csv", 
         sep= "," )

@@ -22,14 +22,16 @@ particionar <- function(data, division, agrupa = "", campo = "fold", start = 1, 
 #------------------------------------------------------------------------------
 
 # Aqui se debe poner la carpeta de la computadora local
-setwd("~/MEDGC/13_LaboratorioImplementacion1/") # Establezco el Working Directory
+setwd("~/MEDGC/13_LaboratorioImplementacion/") # Establezco el Working Directory
 
 # cargo los datos
 
 dataset <- fread("./datasets/paquete_premium_202011.csv")
 
+#dataset[,ctrx_quarter:=NULL] - para sacar una varaible
+
 # particiono estratificadamente el dataset
-particionar(dataset, division = c(70, 30), agrupa = "clase_ternaria", seed = 777137) # Cambiar por la primer semilla de cada uno !
+particionar(dataset, division = c(70, 30), agrupa = "clase_ternaria", seed = 664967) # Cambiar por la primer semilla de cada uno !
 
 param_basicos <- list(
   "cp" = 0, # complejidad minima
@@ -68,3 +70,6 @@ ganancia_test <- dataset[fold == 2 & prob_baja2 > 1 / 60, sum(ganancia)]
 ganancia_test_normalizada <- ganancia_test / 0.3
 
 cat(ganancia_test_normalizada)
+
+# grafico el arbol
+prp(modelo, extra = 101, digits = 5, branch = 1, type = 4, varlen = 0, faclen = 0)

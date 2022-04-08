@@ -3,7 +3,7 @@ library(ggplot2)
 
 setwd("~/MEDGC/13_LaboratorioImplementacion1/")
 
-res001 <- fread("./labo/exp/HT2020/gridsearch_ftp_20220401_001938.txt")
+res001 <- fread("./labo/exp/HT2020/gridsearch20220328_201413.txt")
 
 ds <- res001[ganancia_promedio >= 10976666, 
        .SD, 

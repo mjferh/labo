@@ -7,7 +7,7 @@ require("rpart")
 require("rpart.plot")
 
 # Aqui se debe poner la carpeta de SU computadora local
-setwd("~/MEDGC/13_LaboratorioImplementacion1/") # Establezco el Working Directory
+setwd("~/MEDGC/13_LaboratorioImplementacion/") # Establezco el Working Directory
 
 # cargo los datos de 202011 que es donde voy a ENTRENAR el modelo
 dtrain <- fread("./datasets/paquete_premium_202011.csv")
