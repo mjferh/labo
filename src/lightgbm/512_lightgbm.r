@@ -8,7 +8,7 @@ require("data.table")
 require("lightgbm")
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("D:\\gdrive\\Austral2022R\\")   #Establezco el Working Directory
+setwd("~/MEDGC/13_LaboratorioImplementacion/")   #Establezco el Working Directory
 
 #cargo el dataset donde voy a entrenar
 dataset  <- fread("./datasets/paquete_premium_202011.csv", stringsAsFactors= TRUE)
@@ -28,8 +28,8 @@ dtrain  <- lgb.Dataset( data= data.matrix(  dataset[ , campos_buenos, with=FALSE
 #genero el modelo con los parametros por default
 modelo  <- lgb.train( data= dtrain,
                       param= list( objective=        "binary",
-                                   num_iterations=     50,  #40
-                                   num_leaves=         64,  #64
+                                   num_iterations=     60,  #40
+                                   num_leaves=         70,  #64
                                    min_data_in_leaf= 3000 ) #3000
                     )
 
@@ -47,7 +47,7 @@ entrega  <- as.data.table( list( "numero_de_cliente"= dapply[  , numero_de_clien
 
 dir.create( "./labo/exp/",  showWarnings = FALSE ) 
 dir.create( "./labo/exp/KA2512/", showWarnings = FALSE )
-archivo_salida  <- "./labo/exp/KA2512/KA_512_001.csv"
+archivo_salida  <- "./labo/exp/KA2512/KA_512_002.csv"
 
 #genero el archivo para Kaggle
 fwrite( entrega, 

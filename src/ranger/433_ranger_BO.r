@@ -145,7 +145,7 @@ EstimarGanancia_ranger  <- function( x )
 #Aqui comienza el programa
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("~/MEDGC/13_LaboratorioImplementacion1/")   #Establezco el Working Directory
+setwd("~/MEDGC/13_LaboratorioImplementacion/")   #Establezco el Working Directory
 
 #cargo el dataset donde voy a entrenar el modelo
 dataset  <- fread("./datasets/paquete_premium_202011.csv", stringsAsFactors= TRUE)   #donde entreno
@@ -155,7 +155,7 @@ dataset  <- fread("./datasets/paquete_premium_202011.csv", stringsAsFactors= TRU
 # HT  representa  Hiperparameter Tuning
 dir.create( "./labo/exp/",  showWarnings = FALSE ) 
 dir.create( "./labo/exp/HT4330/", showWarnings = FALSE )
-setwd("~/MEDGC/13_LaboratorioImplementacion1/labo/exp/HT4330/")   #Establezco el Working Directory DEL EXPERIMENTO
+setwd("~/MEDGC/13_LaboratorioImplementacion/labo/exp/HT4330/")   #Establezco el Working Directory DEL EXPERIMENTO
 
 #en estos archivos quedan los resultados
 kbayesiana  <- "HT433.RDATA"
