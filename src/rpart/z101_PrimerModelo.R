@@ -13,13 +13,14 @@ setwd("~/MEDGC/13_LaboratorioImplementacion/") # Establezco el Working Directory
 dtrain <- fread("./datasets/paquete_premium_202011.csv")
 
 # genero el modelo,  aqui se construye el arbol
+
 modelo <- rpart("clase_ternaria ~ .", # quiero predecir clase_ternaria a partir de el resto de las variables
   data = dtrain,
   xval = 0,
-  cp = -0.15, # esto significa no limitar la complejidad de los splits
-  minsplit = 75, # minima cantidad de registros para que se haga el split
-  minbucket = 1, # tamaño minimo de una hoja
-  maxdepth = 6
+  cp = -0.0534854753727972, # esto significa no limitar la complejidad de los splits
+  minsplit = 1089, # minima cantidad de registros para que se haga el split
+  minbucket = 398, # tamaño minimo de una hoja
+  maxdepth = 20
 ) # profundidad maxima del arbol
 
 # grafico el arbol
@@ -51,6 +52,6 @@ dir.create("./labo/exp/")
 dir.create("./labo/exp/KA2001")
 
 fwrite(entrega,
-  file = "./labo/exp/KA2001/K101_002.csv",
+  file = "./labo/exp/KA2001/K101_t02_02.csv",
   sep = ","
 )
