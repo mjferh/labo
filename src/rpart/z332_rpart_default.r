@@ -10,14 +10,6 @@ require("rlist")
 require("rpart")
 require("parallel")
 
-
-hs  <- makeParamSet(
-          makeNumericParam("cp"       , lower= -1   , upper=    0.1),
-          makeIntegerParam("minsplit" , lower=  1L  , upper= 8000L),  #la letra L al final significa ENTERO
-          makeIntegerParam("minbucket", lower=  1L  , upper= 2000L),
-          makeIntegerParam("maxdepth" , lower=  3L  , upper=   20L),
-          forbidden = quote( minbucket > 0.5*minsplit ) )             # minbuket NO PUEDE ser mayor que la mitad de minsplit
-
 ksemilla_azar  <- 777137   #cambiar por la primer semilla
 
 #------------------------------------------------------------------------------
