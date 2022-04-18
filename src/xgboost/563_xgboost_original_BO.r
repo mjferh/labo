@@ -1,5 +1,5 @@
 # Este script esta pensado para correr en la PC local 
-# Optimizacion Bayesiana de hiperparametros de  lightgbm, con el metodo TRADICIONAL de los hiperparametros originales de lightgbm
+# Optimizacion Bayesiana de hiperparametros de  xgboost, con el metodo TRADICIONAL de los hiperparametros originales de xgboost
 # 5-fold cross validation
 # la probabilidad de corte es un hiperparametro
 
@@ -10,7 +10,7 @@ gc()             #garbage collection
 require("data.table")
 require("rlist")
 
-require("lightgbm")
+require("xgboost")
 
 #paquetes necesarios para la Bayesian Optimization
 require("DiceKriging")
@@ -21,11 +21,11 @@ kBO_iter  <- 100   #cantidad de iteraciones de la Optimizacion Bayesiana
 
 #Aqui se cargan los hiperparametros
 hs <- makeParamSet( 
-         makeNumericParam("learning_rate",    lower=  0.01 , upper=    0.3),
-         makeNumericParam("feature_fraction", lower=  0.2  , upper=    1.0),
-         makeIntegerParam("min_data_in_leaf", lower=  0    , upper= 8000),
-         makeIntegerParam("num_leaves",       lower= 16L   , upper= 1024L),
-         makeNumericParam("prob_corte",       lower= 1/120 , upper=  1/20)  #esto sera visto en clase en gran detalle
+         makeNumericParam("eta",              lower=  0.01 , upper=    0.3),   #equivalente a learning rate
+         makeNumericParam("colsample_bytree", lower=  0.2  , upper=    1.0),   #equivalente a feature_fraction
+         makeIntegerParam("min_child_weight", lower=  0L   , upper=   10L),    #groseramente equivalente a  min_data_in_leaf
+         makeIntegerParam("max_depth",        lower=  2L   , upper=   30L),    #profundidad del arbol, NO es equivalente a num_leaves
+         makeNumericParam("prob_corte",       lower= 1/120 , upper=  1/20)     #pruebo  cortar con otras probabilidades
         )
 
 ksemilla_azar  <- 102191  #Aqui poner la propia semilla
@@ -56,73 +56,72 @@ loguear  <- function( reg, arch=NA, folder="./exp/", ext=".txt", verbose=TRUE )
 }
 #------------------------------------------------------------------------------
 #esta funcion calcula internamente la ganancia de la prediccion probs
-fganancia_logistic_lightgbm   <- function( probs, datos) 
+
+SCORE_PCORTE  <- log( 1/60 / ( 1 - 1/60 ) )   #esto hace falta en ESTA version del XGBoost ... misterio por ahora ...
+
+fganancia_logistic_xgboost   <- function( scores, datos) 
 {
-  vlabels  <- get_field(datos, "label")
+  vlabels  <- getinfo( datos, "label")
 
-  gan  <- sum( (probs > PROB_CORTE  ) *
-               ifelse( vlabels== 1, 59000, -1000 ) )
+  gan  <- sum( ( scores > SCORE_PCORTE  ) *
+                 ifelse( vlabels== 1, 59000, -1000 ) )
 
 
-  return( list( "name"= "ganancia", 
-                "value"=  gan,
-                "higher_better"= TRUE ) )
+  return(  list("metric" = "ganancia", "value" = gan ) )
 }
 #------------------------------------------------------------------------------
 #esta funcion solo puede recibir los parametros que se estan optimizando
 #el resto de los parametros se pasan como variables globales, la semilla del mal ...
 
-EstimarGanancia_lightgbm  <- function( x )
+EstimarGanancia_xgboost  <- function( x )
 {
   gc()  #libero memoria
 
   #llevo el registro de la iteracion por la que voy
   GLOBAL_iteracion  <<- GLOBAL_iteracion + 1
 
-  PROB_CORTE <<- x$prob_corte   #asigno la variable global
+  SCORE_PCORTE  <<- log( x$prob_corte / ( 1 - x$prob_corte ) ) 
 
   kfolds  <- 5   # cantidad de folds para cross validation
 
-  param_basicos  <- list( objective= "binary",
-                          metric= "custom",
-                          first_metric_only= TRUE,
-                          boost_from_average= TRUE,
-                          feature_pre_filter= FALSE,
-                          verbosity= -100,
-                          seed= 999983,
-                          max_depth=  -1,         # -1 significa no limitar,  por ahora lo dejo fijo
-                          min_gain_to_split= 0.0, #por ahora, lo dejo fijo
-                          lambda_l1= 0.0,         #por ahora, lo dejo fijo
-                          lambda_l2= 0.0,         #por ahora, lo dejo fijo
-                          max_bin= 31,            #por ahora, lo dejo fijo
-                          num_iterations= 9999,    #un numero muy grande, lo limita early_stopping_rounds
-                          force_row_wise= TRUE    #para que los alumnos no se atemoricen con tantos warning
+  #otros hiperparmetros, que por ahora dejo en su valor default
+  param_basicos  <- list( gamma=                0.0,  #por ahora, lo dejo fijo, equivalente a  min_gain_to_split
+                          alpha=                0.0,  #por ahora, lo dejo fijo, equivalente a  lambda_l1
+                          lambda=               0.0,  #por ahora, lo dejo fijo, equivalente a  lambda_l2
+                          subsample=            1.0,  #por ahora, lo dejo fijo
+                          tree_method=       "auto",  #por ahora lo dejo fijo, pero ya lo voy a cambiar a "hist"
+                          grow_policy=  "depthwise",  #ya lo voy a cambiar a "lossguide"
+                          max_bin=            256,    #por ahora fijo
+                          max_leaves=           0,    #ya lo voy a cambiar
+                          scale_pos_weight=     1.0   #por ahora, lo dejo fijo
                         )
 
-  #el parametro discolo, que depende de otro
-  param_variable  <- list(  early_stopping_rounds= as.integer(50 + 5/x$learning_rate) )
-
-  param_completo  <- c( param_basicos, param_variable, x )
+  param_completo  <- c( param_basicos, x )
 
   set.seed( 999983 )
-  modelocv  <- lgb.cv( data= dtrain,
-                       eval= fganancia_logistic_lightgbm,
-                       stratified= TRUE, #sobre el cross validation
-                       nfold= kfolds,    #folds del cross validation
+  modelocv  <- xgb.cv( objective= "binary:logistic",
+                       data= dtrain,
+                       feval= fganancia_logistic_xgboost,
+                       disable_default_eval_metric= TRUE,
+                       maximize= TRUE,
+                       stratified= TRUE,     #sobre el cross validation
+                       nfold= kfolds,        #folds del cross validation
+                       nrounds= 9999,        #un numero muy grande, lo limita early_stopping_rounds
+                       early_stopping_rounds= as.integer(50 + 5/x$eta),
+                       base_score= mean( getinfo(dtrain, "label")),  
                        param= param_completo,
-                       verbose= -100,
-                       seed= 999983
+                       verbose= -100
                       )
 
   #obtengo la ganancia
-  ganancia  <- unlist(modelocv$record_evals$valid$ganancia$eval)[ modelocv$best_iter ]
+  ganancia   <- unlist( modelocv$evaluation_log[ , test_ganancia_mean] )[ modelocv$best_iter ] 
 
-  ganancia_normalizada  <-  ganancia* kfolds     #normailizo la ganancia
+  ganancia_normalizada  <- ganancia* kfolds     #normailizo la ganancia
 
   #el lenguaje R permite asignarle ATRIBUTOS a cualquier variable
-  attr(ganancia_normalizada ,"extras" )  <- list("num_iterations"= modelocv$best_iter)  #esta es la forma de devolver un parametro extra
+  attr(ganancia_normalizada ,"extras" )  <- list("nrounds"= modelocv$best_iter)  #esta es la forma de devolver un parametro extra
 
-  param_completo$num_iterations <- modelocv$best_iter  #asigno el mejor num_iterations
+  param_completo$nrounds <- modelocv$best_iter  #asigno el mejor nrounds
   param_completo["early_stopping_rounds"]  <- NULL     #elimino de la lista el componente  "early_stopping_rounds"
 
   #logueo 
@@ -145,13 +144,13 @@ dataset  <- fread("./datasets/paquete_premium_202011.csv")
 #creo la carpeta donde va el experimento
 # HT  representa  Hiperparameter Tuning
 dir.create( "./labo/exp/",  showWarnings = FALSE ) 
-dir.create( "./labo/exp/HT5330/", showWarnings = FALSE )
-setwd("D:\\gdrive\\Austral2022R\\labo\\exp\\HT5330\\")   #Establezco el Working Directory DEL EXPERIMENTO
+dir.create( "./labo/exp/HT5630/", showWarnings = FALSE )
+setwd("D:\\gdrive\\Austral2022R\\labo\\exp\\HT5630\\")   #Establezco el Working Directory DEL EXPERIMENTO
 
 
 #en estos archivos quedan los resultados
-kbayesiana  <- "HT533.RDATA"
-klog        <- "HT533.txt"
+kbayesiana  <- "HT563.RDATA"
+klog        <- "HT563.txt"
 
 
 GLOBAL_iteracion  <- 0   #inicializo la variable global
@@ -173,13 +172,13 @@ dataset[ , clase01 := ifelse( clase_ternaria=="BAJA+2", 1L, 0L) ]
 campos_buenos  <- setdiff( colnames(dataset), c("clase_ternaria","clase01") )
 
 #dejo los datos en el formato que necesita LightGBM
-dtrain  <- lgb.Dataset( data= data.matrix(  dataset[ , campos_buenos, with=FALSE]),
+dtrain  <- xgb.DMatrix( data=  data.matrix(  dataset[ , campos_buenos, with=FALSE]),
                         label= dataset$clase01 )
 
 
 
 #Aqui comienza la configuracion de la Bayesian Optimization
-funcion_optimizar  <- EstimarGanancia_lightgbm   #la funcion que voy a maximizar
+funcion_optimizar  <- EstimarGanancia_xgboost   #la funcion que voy a maximizar
 
 configureMlr( show.learner.output= FALSE)
 
@@ -207,9 +206,3 @@ if( !file.exists( kbayesiana ) ) {
   run  <- mboContinue( kbayesiana )   #retomo en caso que ya exista
 }
 
-
-quit( save="no" )
-
-
-# pero nosotros  NO nos vamos a quedar tranquilos sin cuestionar los hiperparametros originales
-# min_data_in_leaf  y  num_leaves   estan relacionados entre ellos

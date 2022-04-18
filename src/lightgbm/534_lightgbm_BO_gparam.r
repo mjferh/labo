@@ -22,7 +22,7 @@ kBO_iter  <- 100   #cantidad de iteraciones de la Optimizacion Bayesiana
 
 #Aqui se cargan los hiperparametros
 hs <- makeParamSet( 
-         makeNumericParam("learning_rate",    lower=  0.01 , upper=    0.1),
+         makeNumericParam("learning_rate",    lower=  0.01 , upper=    0.3),
          makeNumericParam("feature_fraction", lower=  0.2  , upper=    1.0),
          makeNumericParam("prob_corte",       lower= 1/120 , upper=   1/20),
          makeNumericParam("gleaf_size",       lower=  20.0 , upper=  100.0), #tamaño de la hoja en escala simil logaritmica

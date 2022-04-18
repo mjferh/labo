@@ -186,6 +186,7 @@ project/target
 .Rproj.user
 *.Rproj
 .Rhistory
+.RData
 
 # Override rule for exp (.csv y .pdf)
 !exp/**

@@ -1,14 +1,14 @@
-# LightGBM  cambiando algunos de los parametros
+# XGBoost  sabor original ,  cambiando algunos de los parametros
 
 #limpio la memoria
 rm( list=ls() )  #remove all objects
 gc()             #garbage collection
 
 require("data.table")
-require("lightgbm")
+require("xgboost")
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("~/MEDGC/13_LaboratorioImplementacion/")   #Establezco el Working Directory
+setwd("D:\\gdrive\\Austral2022R\\")   #Establezco el Working Directory
 
 #cargo el dataset donde voy a entrenar
 dataset  <- fread("./datasets/paquete_premium_202011.csv", stringsAsFactors= TRUE)
@@ -20,18 +20,20 @@ dataset[ , clase01 := ifelse( clase_ternaria=="BAJA+2", 1L, 0L) ]
 #los campos que se van a utilizar
 campos_buenos  <- setdiff( colnames(dataset), c("clase_ternaria","clase01") )
 
-set.seed(777137)
 
-#dejo los datos en el formato que necesita LightGBM
-dtrain  <- lgb.Dataset( data= data.matrix(  dataset[ , campos_buenos, with=FALSE]),
+#dejo los datos en el formato que necesita XGBoost
+dtrain  <- xgb.DMatrix( data= data.matrix(  dataset[ , campos_buenos, with=FALSE]),
                         label= dataset$clase01 )
 
 #genero el modelo con los parametros por default
-modelo  <- lgb.train( data= dtrain,
-                      param= list( objective=        "binary",
-                                   num_iterations=     60,  #40
-                                   num_leaves=         31,  #64
-                                   min_data_in_leaf= 20 ) #3000
+modelo  <- xgb.train( data= dtrain,
+                      param= list( objective=       "binary:logistic",
+                                   max_depth=           6,
+                                   min_child_weight=    1,
+                                   eta=                 0.3,
+                                   colsample_bytree=    1.0
+                                   ),
+                      nrounds= 34
                     )
 
 #aplico el modelo a los datos sin clase
@@ -47,20 +49,10 @@ entrega  <- as.data.table( list( "numero_de_cliente"= dapply[  , numero_de_clien
                                  "Predicted"= prediccion > 1/60)  ) #genero la salida
 
 dir.create( "./labo/exp/",  showWarnings = FALSE ) 
-dir.create( "./labo/exp/KA2512/", showWarnings = FALSE )
-archivo_salida  <- "./labo/exp/KA2512/KA_512_t02_01.csv"
+dir.create( "./labo/exp/KA5610/", showWarnings = FALSE )
+archivo_salida  <- "./labo/exp/KA5610/KA_561_001.csv"
 
 #genero el archivo para Kaggle
 fwrite( entrega, 
         file= archivo_salida, 
         sep= "," )
-
-
-#ahora imprimo la importancia de variables
-tb_importancia  <-  as.data.table( lgb.importance(modelo) ) 
-archivo_importancia  <- "./labo/exp/KA2512/KA_512_importancia_t02_01.txt"
-
-fwrite( tb_importancia, 
-        file= archivo_importancia, 
-        sep= "\t" )
-

@@ -17,7 +17,7 @@ require("DiceKriging")
 require("mlrMBO")
 
 
-kBO_iter  <- 100   #cantidad de iteraciones de la Optimizacion Bayesiana
+kBO_iter  <- 150   #aumento las iteraciones ya que tengo dos hiperparametros mas
 
 #Aqui se cargan los hiperparametros
 hs <- makeParamSet( 
@@ -25,7 +25,9 @@ hs <- makeParamSet(
          makeNumericParam("feature_fraction", lower=  0.2  , upper=    1.0),
          makeIntegerParam("min_data_in_leaf", lower=  0    , upper= 8000),
          makeIntegerParam("num_leaves",       lower= 16L   , upper= 1024L),
-         makeNumericParam("prob_corte",       lower= 1/120 , upper=  1/20)  #esto sera visto en clase en gran detalle
+         makeNumericParam("prob_corte",       lower= 1/120 , upper=  1/20),
+         makeNumericParam("lambda_l1",        lower=  0    , upper=   100), #AGREGADO recien
+         makeNumericParam("lambda_l2",        lower=  0    , upper=   100)  #AGREGADO recien
         )
 
 ksemilla_azar  <- 102191  #Aqui poner la propia semilla
@@ -92,8 +94,8 @@ EstimarGanancia_lightgbm  <- function( x )
                           seed= 999983,
                           max_depth=  -1,         # -1 significa no limitar,  por ahora lo dejo fijo
                           min_gain_to_split= 0.0, #por ahora, lo dejo fijo
-                          lambda_l1= 0.0,         #por ahora, lo dejo fijo
-                          lambda_l2= 0.0,         #por ahora, lo dejo fijo
+                          # lambda_l1= 0.0,        # ATENCION LINEA COMENTADA
+                          # lambda_l2= 0.0,        # ATENCION LINEA COMENTADA
                           max_bin= 31,            #por ahora, lo dejo fijo
                           num_iterations= 9999,    #un numero muy grande, lo limita early_stopping_rounds
                           force_row_wise= TRUE    #para que los alumnos no se atemoricen con tantos warning
@@ -145,13 +147,13 @@ dataset  <- fread("./datasets/paquete_premium_202011.csv")
 #creo la carpeta donde va el experimento
 # HT  representa  Hiperparameter Tuning
 dir.create( "./labo/exp/",  showWarnings = FALSE ) 
-dir.create( "./labo/exp/HT5330/", showWarnings = FALSE )
-setwd("D:\\gdrive\\Austral2022R\\labo\\exp\\HT5330\\")   #Establezco el Working Directory DEL EXPERIMENTO
+dir.create( "./labo/exp/HT5370/", showWarnings = FALSE )
+setwd("D:\\gdrive\\Austral2022R\\labo\\exp\\HT5370\\")   #Establezco el Working Directory DEL EXPERIMENTO
 
 
 #en estos archivos quedan los resultados
-kbayesiana  <- "HT533.RDATA"
-klog        <- "HT533.txt"
+kbayesiana  <- "HT537.RDATA"
+klog        <- "HT537.txt"
 
 
 GLOBAL_iteracion  <- 0   #inicializo la variable global
