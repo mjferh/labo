@@ -1,0 +1,98 @@
+#Hyperparameter Tuning
+
+googlecloud:
+  RAM:   128
+  vCPU:    8
+  disk:  300
+
+
+experiment:
+  script: "src/completo/z931_HT_lightgbm.r"
+  restart: TRUE
+  name: "exp"
+  requires:   [ "TS9210" ]
+
+
+param:
+  algoritmo:  "lightgbm"
+  semilla: 102191
+  crossvalidation: FALSE
+  crossvalidation_folds: 5
+  validate: FALSE
+
+  clase_train_POS:    [ "BAJA+2", "BAJA+1" ]
+  clase_validate_POS: [ "BAJA+2" ]
+  clase_test_POS:     [ "BAJA+2" ]
+
+
+ #los parametros que son vector [desde, hasta], van a Bayesian Optimization
+ #los parametros que son un solo valor  NO van a la B.O. y se pasan fijos
+  lightgbm:
+
+    learning_rate:      [ 0.02, 0.3]
+    feature_fraction:   [ 0.1, 1.0 ]
+    num_leaves:         [ 16, 1024, "integer" ]
+    min_data_in_leaf:   [  0, 8000, "integer" ]
+
+    lambda_l1:  0
+    lambda_l2:  0
+    min_gain_to_split: 0
+    bagging_fraction: 1.0
+
+    pos_bagging_fraction: 1.0
+    neg_bagging_fraction: 1.0
+
+    max_depth:  -1
+    max_bin:     31
+    
+    seed: 999983
+    extra_trees: FALSE
+
+    drop_rate: 0.1
+    max_drop: 50
+    skip_drop: 0.5
+
+    metric: "custom"
+    first_metric_only: TRUE
+    
+    objective: "binary"
+    boost_from_average: TRUE
+    force_row_wise: TRUE
+    feature_pre_filter: FALSE
+    boosting: "gbdt"
+    num_threads:  0   #usa todas las vCPUs
+    verbosity: -100
+    verbose:  -100
+
+  #Optimizacion Bayesiana
+  BO:
+    iterations: 100             #cantidad de iteraciones
+
+    noisy: TRUE
+    minimize: FALSE
+    has.simple.signature: FALSE
+    save.on.disk.at.time: 600
+
+
+  files:
+    input:
+      dentrada: "train_strategy"
+    output:
+      BOlog:  "BO_log.txt"
+      BObin:  "BO_bin.RDATA"
+      tb_importancia:  "tb_importancia.txt"
+      importancia: "impo_"
+
+  const:
+    campo_clase: "clase_ternaria"
+    campo_periodo: "foto_mes"
+    campo_id:  "numero_de_cliente"
+    POS_ganancia: 59000
+    NEG_ganancia: -1000
+
+
+environment:
+  repo_dir: "~/labo/"
+  exp_dir:  "~/buckets/b1/exp/"
+  catalog:  "catalogo.txt"
+
