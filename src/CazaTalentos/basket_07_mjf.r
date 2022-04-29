@@ -28,13 +28,14 @@ jugadores  <-  c( peloton, mejor ) #intencionalmente el mejor esta al final
 # mapply(  ftirar, jugadores, 10 )
 
 archivo_salida <- paste0(
-  "./labo/exp/CT/particion_inicial_",
+  "./labo/exp/CT/prob_median_",
   format(Sys.time(), "%Y%m%d_%H%M%S"),
   ".txt"
 )
 
-for (q in seq(0.5,0.95,0.05)){
-  for(  tiros_libres  in c(50,60,70,80,90,100,110,120,130,140) )
+# c(0.5, 0.25, 0.125, 0.0625)
+for (q in  c(0.03125)){ 
+  for(  tiros_libres  in seq(60, 500, 5) )
   {
   
     primero_pasa  <- 0
@@ -44,7 +45,8 @@ for (q in seq(0.5,0.95,0.05)){
       vaciertos  <- mapply( ftirar, jugadores, tiros_libres )
       #mejor  <- which.max( vaciertos )
       
-      umbral = quantile(vaciertos, probs = q)
+      umbral = quantile(vaciertos, probs = 1 - q)
+      # umbral = median(vaciertos)
       
       #if( mejor == 100 )  primero_ganador  <- primero_ganador + 1
       if( vaciertos[100] > umbral)  primero_pasa  <- primero_pasa + 1

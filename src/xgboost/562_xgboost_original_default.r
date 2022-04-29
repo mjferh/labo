@@ -11,7 +11,7 @@ require("rlist")
 require("xgboost")
 
 
-ksemilla_azar  <- 777137  #Aqui poner la propia semilla
+ksemilla_azar  <- 664967  #Aqui poner la propia semilla
 
 #------------------------------------------------------------------------------
 #graba a un archivo los componentes de lista

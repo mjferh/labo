@@ -11,11 +11,15 @@ require("lightgbm")
 setwd("~/MEDGC/13_LaboratorioImplementacion/") # Establezco el Working Directory
 
 # cargo el dataset donde voy a entrenar
-dataset <- fread("./datasets/paquete_premium_202011.csv", stringsAsFactors = TRUE)
-
+dataset <- fread("./datasets/FE4020/paquete_premium_202011_ext001.csv", stringsAsFactors = TRUE)
 
 # paso la clase a binaria que tome valores {0,1}  enteros
-dataset[, clase01 := ifelse(clase_ternaria == "BAJA+2", 1L, 0L)]
+# dataset[, clase01 := ifelse(clase_ternaria == "BAJA+2", 1L, 0L)]
+
+#paso la clase a binaria que tome valores {0,1}  enteros
+#set trabaja con la clase  POS = { BAJA+1, BAJA+2 } 
+#esta estrategia es MUY importante
+dataset[ , clase01 := ifelse( clase_ternaria %in%  c("BAJA+2","BAJA+1"), 1L, 0L) ]
 
 # los campos que se van a utilizar
 campos_buenos <- setdiff(colnames(dataset), c("clase_ternaria", "clase01"))
@@ -35,37 +39,28 @@ modelo <- lgb.train(
   param = list(
     objective = "binary",
     seed = ksemilla_azar,
-    # Default --------------
-    # num_iterations = 115,
-    # learning_rate = 0.01,
-    # feature_fraction = 1,
-    # min_data_in_leaf = 20,
-    # num_leaves = 31
-    
-    # BO ------------------
-    # max_bin=31,
-    # num_iterations = 1025,
-    # learning_rate = 0.0102373904120051,
-    # feature_fraction = 0.364500143688873,
-    # min_data_in_leaf = 4351,
-    # num_leaves = 173
-    
-    # BO MJF ---------------
-    max_bin=31,
-    num_iterations = 101,
-    learning_rate = 0.0782625510641271,
-    feature_fraction = 0.948851908323736,
-    min_data_in_leaf = 527,
-    num_leaves = 350,
-    min_gain_to_split = 0.00439696902011192,
-    lambda_l1 = 0.0984939434173004,
-    lambda_l2 = 55.0161411447029
 
+    # BO FE MJF ---------------
+    # max_bin=31,
+    # num_iterations = 616,
+    # learning_rate = 0.0102839503170953,
+    # feature_fraction = 0.293310935998755,
+    # min_data_in_leaf = 1792,
+    # num_leaves = 799
+    
+    # BO FE MJF 001 ----------
+    max_bin=31,
+    num_iterations = 156,
+    learning_rate = 0.043509034934703,
+    feature_fraction = 0.200199955359218,
+    min_data_in_leaf = 7995,
+    num_leaves = 1024
+    
   )
 )
 
 # aplico el modelo a los datos sin clase
-dapply <- fread("./datasets/paquete_premium_202101.csv")
+dapply <- fread("./datasets/FE4020/paquete_premium_202101_ext001.csv")
 
 # aplico el modelo a los datos nuevos
 prediccion <- predict(
@@ -73,18 +68,20 @@ prediccion <- predict(
   data.matrix(dapply[, campos_buenos, with = FALSE])
 )
 
+#ordeno la tabla por probabilidad descendente, al comienzo quedan los registros que mas debo enviar estimulo
+setorder( tb_entrega, -prob )
 
 # Genero la entrega para Kaggle
 entrega <- as.data.table(list(
   "numero_de_cliente" = dapply[, numero_de_cliente],
   # "Predicted" = prediccion > 1 / 60	
-  # "Predicted" = prediccion > 0.0139912084156403 #Actualizar!!!
-  "Predicted" = prediccion > 0.0123866028964812
+  # "Predicted" = prediccion > 0.0147209568126027
+  "Predicted" = prediccion > 0.0154748670733059
 )) # genero la salida
 
 dir.create("./labo/exp/", showWarnings = FALSE)
 dir.create("./labo/exp/KA2512/", showWarnings = FALSE)
-archivo_salida <- "./labo/exp/KA2512/KA_512_t02_mjf01.csv"
+archivo_salida <- "./labo/exp/KA2512/KA_512_FE_001.csv"
 
 # genero el archivo para Kaggle
 fwrite(entrega,
@@ -92,10 +89,9 @@ fwrite(entrega,
   sep = ","
 )
 
-
 # ahora imprimo la importancia de variables
 tb_importancia <- as.data.table(lgb.importance(modelo))
-archivo_importancia <- "./labo/exp/KA2512/KA_512_importancia_t02_mjf01.txt"
+archivo_importancia <- "./labo/exp/KA2512/KA_512_importancia_FE_001.txt"
 
 fwrite(tb_importancia,
   file = archivo_importancia,

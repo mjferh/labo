@@ -11,8 +11,6 @@ gc()
 
 require("data.table")
 
-
-
 EnriquecerDataset  <- function( dataset , arch_destino )
 {
 
@@ -86,7 +84,49 @@ EnriquecerDataset  <- function( dataset , arch_destino )
   dataset[ , mvr_mpagosdolares        := mv_mpagosdolares / mv_mlimitecompra ]
   dataset[ , mvr_mconsumototal        := mv_mconsumototal  / mv_mlimitecompra ]
   dataset[ , mvr_mpagominimo          := mv_mpagominimo  / mv_mlimitecompra ]
-
+  
+  # BEGIN mjfer ---------------------------
+  
+  #Asignar nulos en vez de cero
+  dataset[ ctarjeta_visa==0 & ctarjeta_visa_trx==0, ctarjeta_visa_trx := NA ]
+  dataset[ ctarjeta_master==0 & ctarjeta_master_trx==0, ctarjeta_master_trx := NA ]
+  
+  #Nivel tecnológico [0,1,2,3,4]
+  dataset[, mjf_nivel_tec := internet + tcallcenter + thomebanking + tmobile_app]
+  
+  #nivel tecnológico por edad
+  dataset[, mjf_nivel_tec_edad := mjf_nivel_tec * cliente_edad]
+  
+  #Cantidad de productos - para validar cproductos
+  dataset[, mjf_cproductos := tpaquete1 + tpaquete2 + tpaquete7 + tpaquete9 + 
+             tcuentas +  ccuenta_corriente + ccaja_ahorro + 
+             ctarjeta_debito + ctarjeta_visa + ctarjeta_master + 
+             cprestamos_personales + cprestamos_prendarios + cprestamos_hipotecarios + 
+             cplazo_fijo + cinversion1 + cinversion2 + ccaja_seguridad + 
+             cseguro_vida + cseguro_auto + cseguro_vivienda + cseguro_accidentes_personales]
+  #Cantidad operaciones/mes - similar a ctrx_quater
+  dataset[, mjf_coper_mes := ctarjeta_debito_trx + ctarjeta_visa_trx + ctarjeta_master_trx + 
+            cpayroll_trx + 
+            ccuenta_debitos_automaticos + 
+            ctarjeta_visa_debitos_automaticos + ctarjeta_master_debitos_automaticos +
+            cpagodeservicios + cpagomiscuentas + cforex +
+            ctransferencias_recibidas + ctransferencias_emitidas + 
+            cextraccion_autoservicio + ccheques_depositados + ccheques_emitidos +
+            ccajas_depositos + ccajas_extracciones]
+  # Cantidad de descuentos
+  dataset[, mjf_cdescuentos := ccajeros_propios_descuentos + ctarjeta_visa_descuentos + 
+            ctarjeta_master_descuentos]
+  
+  
+  # Ratio operaciones at. personal / autoservicio
+  dataset[, mjf_rautoservicio := (ccajas_trx / 
+                                    (ccallcenter_trx + chomebanking_trx + cmobile_app_trx + 
+                                     catm_trx + catm_trx_other))]
+  # Ratio operaciones cajeros propios / otros bancos
+  dataset[, mjf_rcajeros := catm_trx / catm_trx_other]
+  
+  
+  # FIN mjfer------------------------------
 
   #valvula de seguridad para evitar valores infinitos
   #paso los infinitos a NULOS
@@ -115,7 +155,7 @@ EnriquecerDataset  <- function( dataset , arch_destino )
     dataset[mapply(is.nan, dataset)] <- 0
   }
 
-  #FIN de la seccion donde se deben hacer cambios con variables nuevas
+  #FIN de la sección donde se deben hacer cambios con variables nuevas
 
   #grabo con nombre extendido
   fwrite( dataset,
@@ -128,20 +168,20 @@ EnriquecerDataset  <- function( dataset , arch_destino )
 #aqui comienza el programa
 
 #Establezco el Working Directory
-setwd( "D:\\gdrive\\Austral2022R\\" )
-
+setwd("~/MEDGC/13_LaboratorioImplementacion/")
 
 #lectura de los datasets
 dataset1  <- fread("./datasets/paquete_premium_202011.csv")
 dataset2  <- fread("./datasets/paquete_premium_202101.csv")
 
-
 #creo la carpeta donde va el experimento
 # FE  representa  Feature Engineering
-dir.create( "./labo/exp/",  showWarnings = FALSE ) 
-dir.create( "./labo/exp/FE4020/", showWarnings = FALSE )
-setwd("D:\\gdrive\\Austral2022R\\labo\\exp\\FE4020\\")   #Establezco el Working Directory DEL EXPERIMENTO
+dir.create( "./datasets/",  showWarnings = FALSE ) 
+dir.create( "./datasets/FE4020/", showWarnings = FALSE )
+setwd("~/MEDGC/13_LaboratorioImplementacion/datasets/FE4020/")   #Establezco el Working Directory DEL EXPERIMENTO
 
-EnriquecerDataset( dataset1, "paquete_premium_202011_ext.csv" )
-EnriquecerDataset( dataset2, "paquete_premium_202101_ext.csv" )
+EnriquecerDataset( dataset1, "paquete_premium_202011_ext001.csv" )
+EnriquecerDataset( dataset2, "paquete_premium_202101_ext001.csv" )
+
+
 

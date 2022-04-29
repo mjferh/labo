@@ -8,7 +8,7 @@ require("data.table")
 require("xgboost")
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("D:\\gdrive\\Austral2022R\\")   #Establezco el Working Directory
+setwd("~/MEDGC/13_LaboratorioImplementacion/")   #Establezco el Working Directory
 
 #cargo el dataset donde voy a entrenar
 dataset  <- fread("./datasets/paquete_premium_202011.csv", stringsAsFactors= TRUE)
@@ -30,12 +30,21 @@ modelo  <- xgb.train( data= dtrain,
                       param= list( objective=       "binary:logistic",
                                    tree_method=     "hist",
                                    grow_policy=     "lossguide",
-                                   max_leaves=          20,
-                                   min_child_weight=    1,
-                                   eta=                 0.3,
-                                   colsample_bytree=    1.0
+                                   
+                                   # Default -----------------------------------
+                                   # max_leaves=          20,
+                                   # min_child_weight=    1,
+                                   # eta=                 0.129342891119721,
+                                   # colsample_bytree=    0.3
+                                   
+                                   # BO ----------------------------------------
+                                   max_leaves=          2,
+                                   min_child_weight=    10,
+                                   eta=                 0.129342891119721,
+                                   colsample_bytree=    0.579870761461218
                                    ),
-                      nrounds= 34
+                      # nrounds= 138
+                      nrounds= 393
                     )
 
 #aplico el modelo a los datos sin clase
@@ -48,11 +57,12 @@ prediccion  <- predict( modelo,
 
 #Genero la entrega para Kaggle
 entrega  <- as.data.table( list( "numero_de_cliente"= dapply[  , numero_de_cliente],
-                                 "Predicted"= prediccion > 1/60)  ) #genero la salida
+                                 # "Predicted"= prediccion > 1/60)
+                                 "Predicted"= prediccion > 0.0195292761341395)  ) #genero la salida
 
 dir.create( "./labo/exp/",  showWarnings = FALSE ) 
 dir.create( "./labo/exp/KA5710/", showWarnings = FALSE )
-archivo_salida  <- "./labo/exp/KA5710/KA_571_001.csv"
+archivo_salida  <- "./labo/exp/KA5710/KA_571_t02_02.csv"
 
 #genero el archivo para Kaggle
 fwrite( entrega, 

@@ -11,7 +11,7 @@ require("rlist")
 require("xgboost")
 
 
-ksemilla_azar  <- 102191  #Aqui poner la propia semilla
+ksemilla_azar  <- 777137  #Aqui poner la propia semilla
 
 #------------------------------------------------------------------------------
 #graba a un archivo los componentes de lista
@@ -81,7 +81,7 @@ EstimarGanancia_xgboost  <- function( x )
 
   param_completo  <- c( param_basicos, x )
 
-  set.seed( 999983 )
+  set.seed( ksemilla_azar )
   modelocv  <- xgb.cv( objective= "binary:logistic",
                        data= dtrain,
                        feval= fganancia_logistic_xgboost,
@@ -119,7 +119,7 @@ EstimarGanancia_xgboost  <- function( x )
 #Aqui empieza el programa
 
 #Aqui se debe poner la carpeta de la computadora local
-setwd("D:\\gdrive\\Austral2022R\\")   #Establezco el Working Directory
+setwd("~/MEDGC/13_LaboratorioImplementacion/")   #Establezco el Working Directory
 
 #cargo el dataset donde voy a entrenar el modelo
 dataset  <- fread("./datasets/paquete_premium_202011.csv")
@@ -128,7 +128,7 @@ dataset  <- fread("./datasets/paquete_premium_202011.csv")
 # HT  representa  Hiperparameter Tuning
 dir.create( "./labo/exp/",  showWarnings = FALSE ) 
 dir.create( "./labo/exp/HT5720/", showWarnings = FALSE )
-setwd("D:\\gdrive\\Austral2022R\\labo\\exp\\HT5720\\")   #Establezco el Working Directory DEL EXPERIMENTO
+setwd("~/MEDGC/13_LaboratorioImplementacion/labo/exp/HT5720/")   #Establezco el Working Directory DEL EXPERIMENTO
 
 
 #en estos archivos quedan los resultados
