@@ -45,7 +45,7 @@ param:
     max_depth:  -1
     max_bin:     31
     
-    seed: 999983
+    seed: 777137
     extra_trees: FALSE
 
     drop_rate: 0.1
@@ -66,7 +66,7 @@ param:
 
   #Optimizacion Bayesiana
   BO:
-    iterations: 100             #cantidad de iteraciones
+    iterations: 150             #cantidad de iteraciones
 
     noisy: TRUE
     minimize: FALSE
