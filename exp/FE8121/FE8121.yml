@@ -1,0 +1,62 @@
+#solo agrego  lag1 y delta1  de las variables originales
+
+googlecloud:
+  RAM:   128
+  vCPU:    8
+  disk:  256
+
+
+experiment:
+  script: "src/completo/z912_FE_desborde.r"
+  restart: FALSE
+  name: "exp"
+  requires: [ "DT0001" ]
+
+
+param:
+  dummiesNA: FALSE
+
+  corregir: FALSE    #se se corrige los campos/foto_mes  MALOS
+  variablesdrift: [] #variables que se eliminan porque estan mal en el futuro
+  
+  variablesmanuales: FALSE
+
+  acumulavars: FALSE   #a lo nuevo lo va aplicando
+
+  tendenciaYmuchomas: 
+    correr: FALSE #Great power comes with great responsability
+    ventana: 6
+    tendencia: FALSE
+    minimo:    FALSE
+    maximo:    FALSE
+    promedio:  FALSE
+    ratioavg:  FALSE
+    ratiomax:  FALSE
+
+
+  #lags y sus deltas , 6 posiciones
+  lag:   [ TRUE, FALSE, FALSE, FALSE, FALSE, FALSE ]
+  delta: [ TRUE, FALSE, FALSE, FALSE, FALSE, FALSE ]
+  canaritosratio: [ 0, 0, 0, 0, 0, 0 ]
+
+  tony:  FALSE
+
+
+  files:
+    input:
+      dentrada: [ "dataset" ]
+    output:
+      dsalida: "paquete_premium_ext.csv.gz"
+
+  const:
+    clase: "clase_ternaria"
+    futuro: [ 202101 ]
+    campos_sort:  [ "numero_de_cliente", "foto_mes" ]   #por donde hago el sort inicial
+    campos_fijos: [ "numero_de_cliente", "foto_mes", "mes", "clase_ternaria" ]
+    modelo:
+
+
+environment:
+  repo_dir: "~/labo/"
+  exp_dir:  "~/buckets/b1/exp/"
+  catalog:  "catalogo.txt"
