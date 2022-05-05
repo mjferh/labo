@@ -12,8 +12,9 @@ experiment:
 
 
 param:
-  semilla: 102191
-
+  #102191
+  semilla: 777137
+  
   #donde aplico el modelo final, los datos sin clase
   future:
     periodos: [ 202101 ]
