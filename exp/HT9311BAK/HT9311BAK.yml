@@ -10,7 +10,7 @@ experiment:
   script: "src/completo/z931_HT_lightgbm.r"
   restart: TRUE
   name: "exp"
-  requires:   [ "TS9211" ]
+  requires:   [ "TS9211BAK" ]
 
 
 param:
@@ -18,7 +18,7 @@ param:
   semilla: 777137
   crossvalidation: FALSE
   crossvalidation_folds: 5
-  validate: TRUE
+  validate: FALSE
 
   clase_train_POS:    [ "BAJA+2", "BAJA+1" ]
   clase_validate_POS: [ "BAJA+2" ]

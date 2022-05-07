@@ -15,7 +15,6 @@ experiment:
 
 param:
   algoritmo:  "lightgbm"
-  
   semilla: 777137   #102191
   crossvalidation: FALSE
   crossvalidation_folds: 5
