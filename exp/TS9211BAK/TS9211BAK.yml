@@ -8,7 +8,8 @@ experiment:
   script: "src/completo/z921_TS_generico.r"
   restart: FALSE
   name: "exp"
-  requires: [ "FE9121" ]
+  requires: [ "FE9120" ]
+
 
 param:
   semilla: 777137
@@ -26,14 +27,14 @@ param:
   train:
     periodos: [ ]
     rango:
-      desde:  201910
+      desde:  201906
       hasta:  202009
-    excluir: [ 202006 ]
+    excluir: [202006]
     undersampling: [ {clase: "CONTINUA", prob: 0.1 } ]
 
   #donde valido
   validate:
-    periodos: [ 202010 ]
+    periodos: [ 202011 ]
     rango:
       desde:  
       hasta:  
@@ -53,7 +54,7 @@ param:
   train_final:
     periodos: [ ]
     rango:
-      desde:  201910
+      desde:  201906
       hasta:  202011
     excluir: [ 202006 ]
     undersampling: [  ]
