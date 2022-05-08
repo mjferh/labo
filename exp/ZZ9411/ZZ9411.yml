@@ -10,7 +10,7 @@ experiment:
   script: "src/completo/z991_ZZ_lightgbm.r"
   restart: TRUE
   name: "exp"
-  requires:   [ "HT8311" ]
+  requires:   [ "HT9311" ]
 
 param:
   modelos_qty:  3
