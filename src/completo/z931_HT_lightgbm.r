@@ -241,7 +241,7 @@ EstimarGanancia_lightgbmCV  <- function( x )
   xx$ganancia  <- ganancia_normalizada
   xx$iteracion_bayesiana  <- GLOBAL_iteracion
 
-  loguear( xx,  arch= PARAM$files$output$BOlog )
+  exp_log( xx,  arch= PARAM$files$output$BOlog )
 
   return( ganancia_normalizada )
 }
