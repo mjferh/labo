@@ -318,7 +318,8 @@ AgregarVariables  <- function( dataset )
         var_name <- paste0("mjf_", var[1], "-", var[2])
         dataset[ , (var_name) :=  get(var[1]) / get(var[2])  ]
       }
-    }    
+    }
+  }
   
   # FIN mjfer------------------------------
   
