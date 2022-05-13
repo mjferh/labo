@@ -294,7 +294,7 @@ AgregarVariables  <- function( dataset )
   # Variables Manuales 2 ------------------
   # Segunda iteración de FE
   
-  if( PARAM$variablesmanuales ){
+  if( PARAM$variablesmanuales2 ){
     
     # Normalizo importes en pesos - Orden por fecha
     varmontos <- colnames(dataset)
