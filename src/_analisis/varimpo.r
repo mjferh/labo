@@ -14,7 +14,8 @@ hts <- hts[startsWith(hts, "HT") & !endsWith(hts, "BAK")]
 
 for(ht in hts){
   impvar_files <- list.files(path = paste0(path_bucket, ht, "/"), pattern = "impo.*txt", recursive = F, full.names = F)
-  if(length(impvar_files) < 1) {next}
+  if(length(impvar_files) < 1){next}
+  if(file.exists(paste0(path_analisis, ht, ".csv"))){next}
   
   dt.vars <- map_df(.x = impvar_files, .f = function(f){
     dt <- fread(paste0(path_bucket, ht,"/", f))
