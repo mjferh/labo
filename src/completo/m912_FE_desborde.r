@@ -307,7 +307,7 @@ AgregarVariables  <- function( dataset )
     
     for(var in varmontos){
       var_name <- paste0("mjf_", var, "_orden")
-      setorderv(dataset1, c("foto_mes", var))
+      setorderv(dataset, c("foto_mes", var))
       dataset[, (var_name) := 1:.N, by = c("foto_mes")]
     }
     
