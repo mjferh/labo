@@ -205,7 +205,6 @@ AgregarVariables  <- function( dataset )
                                           ifelse( is.na(Visa_status), 10, Visa_status), 
                                           Master_status)  ]
 
-
   #combino MasterCard y Visa
   dataset[ , mv_mfinanciacion_limite := rowSums( cbind( Master_mfinanciacion_limite,  Visa_mfinanciacion_limite) , na.rm=TRUE ) ]
 
@@ -291,6 +290,35 @@ AgregarVariables  <- function( dataset )
   # Ratio operaciones cajeros propios / otros bancos
   dataset[, mjf_rcajeros := catm_trx / catm_trx_other]
   
+  
+  # Variables Manuales 2 ------------------
+  # Segunda iteración de FE
+  
+  if( PARAM$variablesmanuales ){
+    
+    # Normalizo importes en pesos - Orden por fecha
+    varmontos <- colnames(dataset)
+    varmontos <- varmontos[(
+      (startsWith(varmontos, "m") & !startsWith(varmontos, "mjf")) |
+        startsWith(varmontos, "mjf_m") |
+        startsWith(varmontos, "Master_m") |
+        startsWith(varmontos, "Visa_m")
+    )]
+    
+    for(var in varmontos){
+      var_name <- paste0("mjf_", var, "_orden")
+      setorderv(dataset1, c("foto_mes", var))
+      dataset[, (var_name) := 1:.N, by = c("foto_mes")]
+    }
+    
+    # Calculo el cociente entre las variables indicadas como importante
+    if(length(PARAMS$varimportantes) > 0){
+      combinations <- combn(PARAMS$varimportantes, 2, simplify = F)  
+      for(var in combinations){
+        var_name <- paste0("mjf_", var[1], "-", var[2])
+        dataset[ , (var_name) :=  get(var[1]) / get(var[2])  ]
+      }
+    }    
   
   # FIN mjfer------------------------------
   
@@ -595,8 +623,8 @@ if( PARAM$dummiesNA )  DummiesNA( dataset )  #esta linea debe ir ANTES de Correg
 
 if( PARAM$corregir )  Corregir( dataset )  #esta linea debe ir DESPUES de  DummiesNA
 
-if( PARAM$variablesmanuales )  AgregarVariables( dataset )
-
+#Interamente chequea el param. variablesmanuales2 y varimportantes
+if( PARAM$variablesmanuales )  AgregarVariables( dataset ) 
 
 #--------------------------------------
 #Esta primera parte es muuuy  artesanal  y discutible  ya que hay multiples formas de hacerlo
