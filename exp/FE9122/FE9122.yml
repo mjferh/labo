@@ -18,7 +18,6 @@ param:
   variablesdrift: [] #variables que se eliminan porque estan mal en el futuro - FALTA EN EL SCRIPT
   
   variablesmanuales: TRUE
-  variablesmanuales2: TRUE  #variablesmanuales debe ser TRUE para ser considerado
   #variables importantes s/HT8210,9210-14
   varimportantes: ["ctrx_quarter","mtarjeta_visa_consumo","mjf_coper_mes","mcuentas_saldo","mpayroll","mcaja_ahorro","cpayroll_trx","mprestamos_personales","mpasivos_margen","mcuenta_corriente","mpayroll_sobre_edad"]
   

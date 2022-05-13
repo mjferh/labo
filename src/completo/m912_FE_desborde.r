@@ -175,7 +175,7 @@ Corregir  <- function( dataset )
 #------------------------------------------------------------------------------
 #Esta es la parte que los alumnos deben desplegar todo su ingenio
 
-AgregarVariables  <- function( dataset )
+AgregarVariables  <- function( dataset, varimportantes)
 {
   gc()
   #INICIO de la seccion donde se deben hacer cambios con variables nuevas
@@ -294,32 +294,31 @@ AgregarVariables  <- function( dataset )
   # Variables Manuales 2 ------------------
   # Segunda iteración de FE
   
-  if( PARAM$variablesmanuales2 ){
-    
-    # Normalizo importes en pesos - Orden por fecha
-    varmontos <- colnames(dataset)
-    varmontos <- varmontos[(
-      (startsWith(varmontos, "m") & !startsWith(varmontos, "mjf")) |
-        startsWith(varmontos, "mjf_m") |
-        startsWith(varmontos, "Master_m") |
-        startsWith(varmontos, "Visa_m")
-    )]
-    
-    for(var in varmontos){
-      var_name <- paste0("mjf_", var, "_orden")
-      setorderv(dataset, c("foto_mes", var))
-      dataset[, (var_name) := 1:.N, by = c("foto_mes")]
-    }
-    
-    # Calculo el cociente entre las variables indicadas como importante
-    if(length(PARAMS$varimportantes) > 0){
-      combinations <- combn(PARAMS$varimportantes, 2, simplify = F)  
-      for(var in combinations){
-        var_name <- paste0("mjf_", var[1], "-", var[2])
-        dataset[ , (var_name) :=  get(var[1]) / get(var[2])  ]
-      }
+  
+  # Normalizo importes en pesos - Orden por fecha
+  varmontos <- colnames(dataset)
+  varmontos <- varmontos[(
+    (startsWith(varmontos, "m") & !startsWith(varmontos, "mjf")) |
+      startsWith(varmontos, "mjf_m") |
+      startsWith(varmontos, "Master_m") |
+      startsWith(varmontos, "Visa_m")
+  )]
+  
+  for(var in varmontos){
+    var_name <- paste0("mjf_", var, "_orden")
+    setorderv(dataset, c("foto_mes", var))
+    dataset[, (var_name) := 1:.N, by = c("foto_mes")]
+  }
+  
+  # Calculo el cociente entre las variables indicadas como importante
+  if(length(varimportantes) > 0){
+    combinations <- combn(varimportantes, 2, simplify = F)  
+    for(var in combinations){
+      var_name <- paste0("mjf_", var[1], "-", var[2])
+      dataset[ , (var_name) :=  get(var[1]) / get(var[2])  ]
     }
   }
+
   
   # FIN mjfer------------------------------
   
@@ -625,7 +624,11 @@ if( PARAM$dummiesNA )  DummiesNA( dataset )  #esta linea debe ir ANTES de Correg
 if( PARAM$corregir )  Corregir( dataset )  #esta linea debe ir DESPUES de  DummiesNA
 
 #Interamente chequea el param. variablesmanuales2 y varimportantes
-if( PARAM$variablesmanuales )  AgregarVariables( dataset ) 
+if( PARAM$variablesmanuales )  AgregarVariables( dataset, PARAM$varimportantes ) 
+
+#ordeno el dataset por <numero_de_cliente, foto_mes> para poder hacer lags
+#había desordenado en la creación de variables manuales 
+setorderv( dataset, PARAM$const$campos_sort )
 
 #--------------------------------------
 #Esta primera parte es muuuy  artesanal  y discutible  ya que hay multiples formas de hacerlo
