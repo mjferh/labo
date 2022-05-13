@@ -37,7 +37,7 @@ param:
   #lags y sus deltas , 6 posiciones
   lag:   [ TRUE, TRUE, FALSE, FALSE, FALSE, TRUE ]
   delta: [ TRUE, TRUE, FALSE, FALSE, FALSE, TRUE ]
-  canaritosratio: [ 0.1, 0.1, 0, 0, 0, 0.1 ]
+  canaritosratio: [ 0.2, 0.2, 0, 0, 0, 0.2 ]
 
   tony:  TRUE
 
