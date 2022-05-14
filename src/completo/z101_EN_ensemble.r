@@ -16,9 +16,8 @@ params$KA_start <- 9000
 params$KA_end <- 13000
 params$KA_step <- 500
 
-# -----------------------------------------------------------
-
 setwd("~/MEDGC/13_LaboratorioImplementacion/")
+# -----------------------------------------------------------
 
 dt_list <- list()
 for (exp in params$require) {
