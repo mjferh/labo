@@ -583,6 +583,7 @@ for( i in 1:length( PARAM$lag ) )
     #veo si tengo que ir agregando variables
     if( PARAM$acumulavars )  cols_lagueables  <- setdiff( colnames(dataset), PARAM$const$campos_fijos )
 
+    cols_lagueables  <- intersect( colnames(dataset), cols_lagueables )
     Lags( cols_lagueables, i, PARAM$delta[ i ] )   #calculo los lags de orden  i
 
     #elimino las variables poco importantes, para hacer lugar a las importantes
