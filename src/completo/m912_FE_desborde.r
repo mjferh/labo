@@ -175,7 +175,7 @@ Corregir  <- function( dataset )
 #------------------------------------------------------------------------------
 #Esta es la parte que los alumnos deben desplegar todo su ingenio
 
-AgregarVariables  <- function( dataset, varimportantes)
+AgregarVariables  <- function( dataset, varimportantes, ordenamontos = FALSE)
 {
   gc()
   #INICIO de la seccion donde se deben hacer cambios con variables nuevas
@@ -296,20 +296,22 @@ AgregarVariables  <- function( dataset, varimportantes)
   
   
   # Normalizo importes en pesos - Orden por fecha
+  if(ordenamontos){
   varmontos <- colnames(dataset)
-  varmontos <- varmontos[(
-    (startsWith(varmontos, "m") & !startsWith(varmontos, "mjf")) |
-      startsWith(varmontos, "mjf_m") |
-      startsWith(varmontos, "Master_m") |
-      startsWith(varmontos, "Visa_m")
-  )]
-  
-  for(var in varmontos){
-    var_name <- paste0("mjf_", var, "_orden")
-    setorderv(dataset, c("foto_mes", var))
-    dataset[, (var_name) := 1:.N, by = c("foto_mes")]
+    varmontos <- varmontos[(
+      (startsWith(varmontos, "m") & !startsWith(varmontos, "mjf")) |
+        startsWith(varmontos, "mjf_m") |
+        startsWith(varmontos, "Master_m") |
+        startsWith(varmontos, "Visa_m")
+    )]
+ 
+    for(var in varmontos){
+      var_name <- paste0("mjf_", var, "_orden")
+      setorderv(dataset, c("foto_mes", var))
+      dataset[, (var_name) := 1:.N, by = c("foto_mes")]
+    }
   }
-  
+    
   # Calculo el cociente entre las variables indicadas como importante
   if(length(varimportantes) > 0){
     combinations <- combn(varimportantes, 2, simplify = F)  
@@ -623,8 +625,7 @@ if( PARAM$dummiesNA )  DummiesNA( dataset )  #esta linea debe ir ANTES de Correg
 
 if( PARAM$corregir )  Corregir( dataset )  #esta linea debe ir DESPUES de  DummiesNA
 
-#Interamente chequea el param. variablesmanuales2 y varimportantes
-if( PARAM$variablesmanuales )  AgregarVariables( dataset, PARAM$varimportantes ) 
+if( PARAM$variablesmanuales )  AgregarVariables( dataset, PARAM$varimportantes, PARAM$ordenamontos ) 
 
 #ordeno el dataset por <numero_de_cliente, foto_mes> para poder hacer lags
 #había desordenado en la creación de variables manuales 
