@@ -8,10 +8,18 @@ gc() # garbage collection
 # Parámetros ------------------------------------------------
 params <- list()
 params$path_bucket <- "./bucket/exp/"
-params$path_ensemble <- "./ensemble/"
+params$path_ensemble <- "./labo/exp/"
 
-params$nombre_exp <- "EN155"
-params$require <- c("ZZ8410", "ZZ9412", "ZZ9414")
+#| EN151      | "ZZ9414"                                          |
+#| EN152      | "ZZ8410"                                          |
+#| EN153      | "ZZ8410", "ZZ9411", "ZZ9412", "ZZ9414"            |
+#| EN154      | "ZZ8410", "ZZ9412", "ZZ9414"                      |
+#| EN253      | "ZZ9422", "ZZ9424"                                |
+#| EN254      | ""ZZ8410", "ZZ9412", "ZZ9414", "ZZ9422", "ZZ9424" |
+
+params$nombre_exp <- "EN254"
+params$require <- c("ZZ8410", "ZZ9412", "ZZ9414", "ZZ9422", "ZZ9424")
+
 params$KA_start <- 9000
 params$KA_end <- 13000
 params$KA_step <- 500
