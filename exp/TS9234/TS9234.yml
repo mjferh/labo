@@ -8,7 +8,7 @@ experiment:
   script: "src/completo/z921_TS_generico.r"
   restart: FALSE
   name: "exp"
-  requires: [ "FE9132" ]
+  requires: [ "FE9123" ]
 
 param:
   semilla: 777137
