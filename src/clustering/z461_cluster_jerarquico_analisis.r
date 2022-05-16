@@ -74,12 +74,12 @@ dataset <- fread("cluster_de_bajas.txt")
 #esta parte conviene hacerla desde la PC local, sobre  cluster_de_bajas.txt
 
 #imprimo un pdf de lboxplot por grupos (con outliers)
-#boxplots <- lapply(X = campos_buenos, FUN = generarBoxPlotsPorGrupos)
-# pdf( "cluster_jerarquico_boxplots.pdf", height = 30)
-# plot_grid(plotlist = boxplots, ncol = 3)
-# dev.off()
+boxplots <- lapply(X = campos_buenos, FUN = generarBoxPlotsPorGrupos)
+pdf( "cluster_jerarquico_boxplots.pdf", height = 30)
+plot_grid(plotlist = boxplots, ncol = 3)
+dev.off()
 
-#imprimo un pdf de boxplots por grupos (con outliers)
+#imprimo un pdf de boxplots por grupos (sin outliers)
 boxplots <- lapply(X = campos_buenos, FUN = generarBoxPlotsPorGrupos, outliers=F)
 pdf( "cluster_jerarquico_boxplots_sinout.pdf", height = 30)
 plot_grid(plotlist = boxplots, ncol = 3)
