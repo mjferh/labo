@@ -9,6 +9,7 @@ gc() # garbage collection
 params <- list()
 params$path_bucket <- "./bucket/exp/"
 params$path_ensemble <- "./labo/exp/"
+params$solo_semillerio <- TRUE
 
 #| EN151      | "ZZ9414"                                                    |
 #| EN152      | "ZZ8410"                                                    |
@@ -19,8 +20,8 @@ params$path_ensemble <- "./labo/exp/"
 #|            |                                                             |
 #| EN951      | "ZZ8410", "ZZ9412", "ZZ9414", "ZZ9422", "ZZ9424", "ZZA414"  |
 
-params$nombre_exp <- "EN951"
-params$require <- c("ZZ8410", "ZZ9412", "ZZ9414", "ZZ9422", "ZZ9424", "ZZA414")
+params$nombre_exp <- "ENA51"
+params$require <- c("ZZA410", "ZZA412", "ZZA414")
 
 params$KA_start <- 9000
 params$KA_end <- 13000
@@ -42,14 +43,16 @@ for (exp in params$require) {
 
   dt <- map_df(.x = ka_files, .f = function(f) {
     dt <- fread(paste0(params$path_bucket, exp, "/", f))
-
+    
     if(startsWith(f, "futuro_prediccion_semillerio")){
       setorder(dt, -pred_acumulada)
-    } else {
+      dt[, ":="(orden = .I, exp = exp, file = f)] # , file = f
+    } else if (!params$solo_semillerio) {
       setorder(dt, -prob)
+      dt[, ":="(orden = .I, exp = exp, file = f)] # , file = f
     }
-    dt[, ":="(orden = .I, exp = exp, file = f)] # , file = f
-   
+      
+    
   })
 
   dt_list[[exp]] <-  dt[, .(numero_de_cliente, orden, exp, file)]
